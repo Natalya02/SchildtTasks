@@ -1,86 +1,35 @@
-﻿// Try to use Exception
-using System;
-
-public class ExceptionTest
+﻿using System;
+class X
 {
-    int[] i = new int[2];
-    int[] j = new int[4];
-
-    decimal div;
-
-    public void show()
-    {
-        for (int a = 0; a < 2; a++)
-            {
-            Console.WriteLine("i = " + i[a]);
-            }
-        for (int a = 0; a < 4; a++)
-        {
-            Console.WriteLine("j = " + j[a]);
-        }
-
-        Console.WriteLine("div = " + div);
-    }
-
-    public ExceptionTest(int inum, int jnum) // It can generate exeption
-    {
-        for (int a = 0; a<2; a++)
-        {
-            i[a] = a;
-        }
-
-        for (int a = 0; a < 4; a++)
-        {
-            j[a] = a;
-        }
-
-        div = i[inum] / j[jnum];
-    }
-
-    public ExceptionTest()
-    {
-        for (int a = 0; a < 2; a++)
-        {
-            i[a] = a;
-        }
-
-        for (int a = 0; a < 4; a++)
-        {
-            j[a] = a;
-        }
-
-        div = 0;
-    } 
+    public int Val;
 }
-
-class ExceptionDemo
+class Y : X { }
+delegate X ChangeIt(Y obj);
+class CoContraVariance
 {
+    static X IncrA(X obj)
+    {
+        X temp = new X();
+        temp.Val = obj.Val + 1;
+        return temp;
+    }
+
+    static Y IncrB(Y obj)
+    {
+        Y temp = new Y();
+        temp.Val = obj.Val + 1;
+        return temp;
+    }
     static void Main()
     {
-        try
-        {
-            ExceptionTest A = new ExceptionTest();
-            Console.WriteLine("Object A"); A.show();
-            ExceptionTest B = new ExceptionTest(1,2) ;
-            Console.WriteLine("Object B"); B.show();
-            ExceptionTest B1 = new ExceptionTest(1, 0);
-            Console.WriteLine("Object B1"); B1.show();
-            ExceptionTest C = new ExceptionTest(5, 9);
-            Console.WriteLine("Object C"); C.show();
-            ExceptionTest D = new ExceptionTest(1, 3);
-            Console.WriteLine("Object D"); D.show();
+        ChangeIt change = IncrA;
 
-            
-        }
-        catch (DivideByZeroException)
-        {
-            Console.WriteLine("Its imposible divide by zero");
-        }
-        catch (IndexOutOfRangeException)
-        {
-            Console.WriteLine("IndexOutOfRangeException");
-        }
+        Y Yob = new Y();
+        X Xob = change(Yob);
+        Console.WriteLine("Xob: " + Xob.Val);
 
-        Console.ReadLine();
+        change = IncrB;
+        Yob = (Y)change(Yob);
+        Console.WriteLine("Yob: " + Yob.Val);
     }
 }
